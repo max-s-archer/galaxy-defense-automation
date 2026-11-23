@@ -21,10 +21,14 @@ def detect(image):
     def coverage(mask, x, y, w, h):
         return cv2.countNonZero(mask[y:y+h, x:x+w]) / (w * h)
 
-    # Header bands of the three face-up cards plus the level-up banner.
+    # Card colors vary. Check the horizontal edges of all three title bands and card bottoms.
+    def card_edge(x, y):
+        above = frame[y-3, x:x+100]
+        below = frame[y+3, x:x+100]
+        return cv2.absdiff(above, below).mean() > 22
+
     if (coverage(teal, 180, 110, 105, 23) > 0.6
-            and all(coverage(teal, x, 426, 110, 22) > 0.65 for x in (27, 178, 328))
-            and all(coverage(teal, x, 550, 110, 82) > 0.55 for x in (27, 178, 328))
+            and all(card_edge(x, y) for x in (32, 182, 332) for y in (423, 451, 641))
             and all(coverage(teal, x, 470, 8, 130) < 0.25 for x in (152, 302))):
         return "three_cards"
 

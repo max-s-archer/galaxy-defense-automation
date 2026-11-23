@@ -87,6 +87,18 @@ step selects the left card and battle resumes. Run again during battle and expec
 For five cards, run once per action: draw the top-left card, draw the top-middle card if
 prompted, and tap the claim button when it appears.
 
+## Poll during battle
+
+On macOS, start the game and run `.venv/bin/python scripts/run_step.py --loop`.
+On Windows PowerShell, run `.\.venv\Scripts\python.exe scripts\run_step.py --loop`.
+The loop waits two seconds after each check. Use `--interval 1` for a one-second delay,
+add `--dry-run` to preview actions, and press Ctrl+C to stop.
+
+Each new selection state triggers its corresponding action once. If the same state persists
+for three further checks, the loop prints a reminder and keeps observing. Two consecutive
+`wait` results allow the next encounter with the same selection state to trigger a fresh action.
+A capture or tap error stops the loop.
+
 ## Repository
 
 - [Agent instructions](AGENTS.md)
