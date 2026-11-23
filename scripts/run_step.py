@@ -63,7 +63,8 @@ def poll(interval, dry_run):
             repeats = 0
         else:
             wait_frames = 0
-            if state != last_action:
+            # Back-to-back level-ups can present another choice between polls.
+            if state == "three_cards" or state != last_action:
                 act(state, shape, dry_run)
                 last_action = state
                 repeats = 0
