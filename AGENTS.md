@@ -11,6 +11,7 @@ apply only when explicitly documented here with their scope. There are currently
 ## Project references
 
 - **Validation:** The Phase 1 flows in the README define the expected on-device behavior.
-  Build, run, and test commands are pending implementation.
+  See [Capture one screenshot](README.md#capture-one-screenshot) for the capture command and
+  device validation steps.
 - **Architecture:** Use `docs/architecture.md` once system boundaries or dependencies are confirmed.
 - **Decisions:** Record significant accepted decisions in `docs/decisions/NNNN-short-title.md`.
