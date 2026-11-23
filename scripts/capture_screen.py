@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 
-def capture(output: Path) -> None:
+def capture_png() -> bytes:
     result = subprocess.run(
         ["adb", "-d", "exec-out", "screencap", "-p"],
         capture_output=True,
@@ -20,7 +20,11 @@ def capture(output: Path) -> None:
     if not (image.startswith(b"\x89PNG\r\n\x1a\n") and
             image.endswith(b"\x00\x00\x00\x00IEND\xaeB`\x82")):
         raise ValueError("ADB returned an empty or incomplete PNG. Check the USB connection.")
+    return image
 
+
+def capture(output: Path) -> None:
+    image = capture_png()
     with output.open("xb") as stream:
         try:
             stream.write(image)

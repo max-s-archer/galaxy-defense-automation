@@ -71,6 +71,22 @@ Supply your own screenshot path. The detector uses the portrait layout observed 
 | `five_cards_claim` | All required draws complete and the gold claim button visible |
 | `wait` | Battle or an unrecognized layout |
 
+## Run one step on the phone
+
+Connect the USB device and open Galaxy Defense. From the same Python environment, preview
+the action for the current screen, then run one live step (macOS, zsh):
+
+```sh
+.venv/bin/python scripts/run_step.py --dry-run
+.venv/bin/python scripts/run_step.py
+```
+
+On Windows (PowerShell), use `.\.venv\Scripts\python.exe scripts\run_step.py` with the same
+options. Each invocation captures a fresh frame. On the three-card screen, verify that a live
+step selects the left card and battle resumes. Run again during battle and expect `wait: no tap`.
+For five cards, run once per action: draw the top-left card, draw the top-middle card if
+prompted, and tap the claim button when it appears.
+
 ## Repository
 
 - [Agent instructions](AGENTS.md)
