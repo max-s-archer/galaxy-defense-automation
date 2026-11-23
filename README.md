@@ -9,8 +9,8 @@ The tool will recognize two card selection screens and choose by position. Card 
 descriptions, and effects do not affect the choice.
 
 - **Three cards:** Tap the first card once. The game returns to battle automatically.
-- **Five cards:** Tap the first card once. Another card may appear after the selection.
-  Keep the single selection and tap Continue to resume battle. Only this flow uses Continue.
+- **Five cards:** Draw the first card. If prompted to draw again, choose a remaining face-down
+  card. The "獲得" button appears when all required draws are complete. Tap it to resume battle.
 
 During battle or on an unrecognized screen, the tool waits without tapping.
 
@@ -41,6 +41,35 @@ game screen is visible, correctly oriented, and legible. Change the screen and c
 using a fresh filename. Each invocation saves the original PNG and preserves existing files.
 To verify failure handling, disconnect USB and run the script with another fresh filename.
 Expect a nonzero exit status and no output file.
+
+## Detect the screen offline
+
+From the repository root, create a Python environment and classify a saved portrait screenshot.
+On macOS (zsh):
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python scripts/detect_screen.py battle_three_cards.png
+```
+
+On Windows (PowerShell):
+
+```powershell
+py -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe scripts\detect_screen.py battle_three_cards.png
+```
+
+Supply your own screenshot path. The detector uses the portrait layout observed on the S23 Ultra.
+
+| Output | Screen |
+| --- | --- |
+| `three_cards` | Three face-up upgrade choices |
+| `five_cards` | Five face-down cards ready to draw |
+| `five_cards_draw_again` | First card revealed and the game prompts for another draw |
+| `five_cards_claim` | All required draws complete and the gold claim button visible |
+| `wait` | Battle or an unrecognized layout |
 
 ## Repository
 
