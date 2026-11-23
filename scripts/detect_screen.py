@@ -40,8 +40,7 @@ def detect(image):
         return cv2.absdiff(above, below).mean() > 22
 
     if (coverage(teal, 180, 110, 105, 23) > 0.6
-            and all(card_edge(x, y) for x in (32, 182, 332) for y in (423, 451, 641))
-            and all(coverage(teal, x, 470, 8, 130) < 0.25 for x in (152, 302))):
+            and all(card_edge(x, y) for x in (32, 182, 332) for y in (423, 451, 641))):
         return "three_cards"
 
     if coverage(teal, 180, 82, 105, 23) < 0.6:
