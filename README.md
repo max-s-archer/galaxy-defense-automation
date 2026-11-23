@@ -69,6 +69,8 @@ Supply your own screenshot path. The detector uses the portrait layout observed 
 | `five_cards` | Five face-down cards ready to draw |
 | `five_cards_draw_again` | First card revealed and the game prompts for another draw |
 | `five_cards_claim` | All required draws complete and the gold claim button visible |
+| `battle_won` | Challenge completed, showing rewards and damage statistics |
+| `battle_lost` | Challenge failed, showing rewards and damage statistics |
 | `wait` | Battle or an unrecognized layout |
 
 ## Run one step on the phone
@@ -91,8 +93,20 @@ prompted, and tap the claim button when it appears.
 
 On macOS, start the game and run `.venv/bin/python scripts/run_step.py --loop`.
 On Windows PowerShell, run `.\.venv\Scripts\python.exe scripts\run_step.py --loop`.
-The loop waits two seconds after each check. Use `--interval 1` for a one-second delay,
-add `--dry-run` to preview actions, and press Ctrl+C to stop.
+Press Ctrl+C to stop polling.
+
+### Polling options
+
+| Option | Default | When to use it |
+| --- | --- | --- |
+| `--interval SECONDS` | `2` | Set the delay after each check. Use `--loop --interval 1` for a one-second delay. |
+| `--dry-run` | Off | Use `--loop --dry-run` to see which actions the script would take. |
+| `--stop-on-result` | Off | Use `--loop --stop-on-result` to exit after one confirmed win or loss. |
+
+Two consecutive checks showing the same outcome confirm the result. The terminal prints
+`Result: battle_won` or `Result: battle_lost` once for that result screen. By default, polling
+continues so you can manually start another battle. With `--stop-on-result`, the Python process
+exits successfully and the phone stays on the result screen. This also applies in dry-run mode.
 
 Each poll showing three upgrade cards taps the left card once, including consecutive level-ups.
 For five-card screens, each new selection state triggers its corresponding action once. If that

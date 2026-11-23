@@ -44,24 +44,36 @@ def act(state, shape, dry_run):
     print(f"{state}: sent tap ({x}, {y})")
 
 
-def poll(interval, dry_run):
+def poll(interval, dry_run, stop_on_result=False):
     last_action = None
     wait_frames = 0
     repeats = 0
     round_number = 0
+    previous_state = None
+    reported_result = None
     while True:
         state, shape = observe()
         round_number += 1
         print(f"[poll {round_number}] {state}", flush=True)
-        if state not in TARGETS:
+        if state in ("battle_won", "battle_lost"):
+            if state == previous_state and state != reported_result:
+                print(f"Result: {state}", flush=True)
+                reported_result = state
+                if stop_on_result:
+                    return
+            last_action = None
+            repeats = wait_frames = 0
+        elif state not in TARGETS:
             if wait_frames == 0:
                 print(f"{state}: no tap")
             wait_frames += 1
             # A single unrecognized animation frame can interrupt a selection.
             if wait_frames >= 2:
                 last_action = None
+                reported_result = None
             repeats = 0
         else:
+            reported_result = None
             wait_frames = 0
             # Back-to-back level-ups can present another choice between polls.
             if state == "three_cards" or state != last_action:
@@ -72,6 +84,7 @@ def poll(interval, dry_run):
                 repeats += 1
                 if repeats == 3:
                     print(f"{state}: still visible after 3 checks. Check the phone.")
+        previous_state = state
         time.sleep(interval)
 
 
@@ -79,13 +92,17 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--dry-run", action="store_true", help="print the planned action only")
     parser.add_argument("--loop", action="store_true", help="poll until Ctrl+C")
+    parser.add_argument("--stop-on-result", action="store_true",
+                        help="exit polling after two matching battle results")
     parser.add_argument("--interval", type=float, default=2, help="seconds between checks")
     args = parser.parse_args()
+    if args.stop_on_result and not args.loop:
+        parser.error("--stop-on-result requires --loop")
     if not math.isfinite(args.interval) or args.interval <= 0:
         parser.error("--interval must be a finite positive number")
     try:
         if args.loop:
-            poll(args.interval, args.dry_run)
+            poll(args.interval, args.dry_run, args.stop_on_result)
         else:
             state, shape = observe()
             act(state, shape, args.dry_run)

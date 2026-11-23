@@ -21,6 +21,18 @@ def detect(image):
     def coverage(mask, x, y, w, h):
         return cv2.countNonZero(mask[y:y+h, x:x+w]) / (w * h)
 
+    # Result screens share a return button and a weapon statistics header.
+    if (coverage(teal, 36, 805, 155, 33) > 0.8
+            and coverage(teal, 90, 401, 285, 19) > 0.65):
+        banner = hsv[112:133, 112:352]
+        for state, lower, upper in (
+            ("battle_won", (6, 110, 65), (22, 255, 255)),
+            ("battle_lost", (98, 30, 50), (121, 145, 210)),
+        ):
+            mask = cv2.inRange(banner, lower, upper)
+            if cv2.countNonZero(mask) > 0.7 * mask.size:
+                return state
+
     # Card colors vary. Check the horizontal edges of all three title bands and card bottoms.
     def card_edge(x, y):
         above = frame[y-3, x:x+100]
