@@ -1,5 +1,7 @@
 # Galaxy Defense Automation
 
+[简体中文](README.zh-CN.md)
+
 A planned Python tool for automating repeated card selections in Galaxy Defense.
 The initial target device is a Samsung Galaxy S23 Ultra running Android 16.
 
@@ -16,8 +18,7 @@ During battle or on an unrecognized screen, the tool waits without tapping.
 
 ## Project status
 
-The author has approved the Phase 1 scope. The first utility captures a single screenshot.
-The author may release the tool after Phase 1 is complete. The scope of Phase 2 is open.
+Phase 1 implementation is complete and has passed device validation. The scope of Phase 2 is open.
 
 ## Capture one screenshot
 
