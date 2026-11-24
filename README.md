@@ -16,9 +16,21 @@ descriptions, and effects do not affect the choice.
 
 During battle or on an unrecognized screen, the tool waits without tapping.
 
+## Phase 2 (planned)
+
+On the three-card upgrade screen, choose the highest-priority card available.
+The priority order is highest first.
+
+1. Purple card
+2. Combination skill card (組合卡)
+3. Chain skill card (連鎖卡)
+4. Ordinary card
+
+If multiple cards share the highest priority, choose the leftmost of those cards.
+
 ## Project status
 
-Phase 1 implementation is complete and has passed device validation. The scope of Phase 2 is open.
+Phase 1 implementation is complete and has passed device validation. Phase 2 is planned.
 
 ## Capture one screenshot
 
