@@ -2,6 +2,7 @@
 
 import argparse
 import math
+import secrets
 import subprocess
 import time
 
@@ -9,27 +10,30 @@ import cv2
 import numpy as np
 
 from capture_screen import capture_png
-from detect_screen import detect
+from detect_screen import FIVE_CENTERS, detect_with_slots
 from preview_choice import choose, classify_cards
 
 
 # Centers in the detector's 466 x 1000 portrait layout.
-TARGETS = {
-    "five_cards": (98, 473),
-    "five_cards_draw_again": (233, 473),
-    "five_cards_claim": (233, 920),
-}
+DRAW_STATES = ("five_cards", "five_cards_draw_again")
 
 
 def observe():
     image = cv2.imdecode(np.frombuffer(capture_png(), np.uint8), cv2.IMREAD_COLOR)
     if image is None:
         raise ValueError("Cannot decode the device screenshot.")
-    return detect(image), image
+    state, slots = detect_with_slots(image)
+    return state, image, slots
 
 
-def act(state, image, dry_run):
-    target = TARGETS.get(state)
+def act(state, image, dry_run, slots):
+    target = None
+    if state in DRAW_STATES and slots:
+        index = secrets.choice(slots)
+        target = FIVE_CENTERS[index]
+        print(f"{state}: random card {index + 1}")
+    elif state == "five_cards_claim":
+        target = (233, 920)
     if state == "three_cards":
         cards = classify_cards(image)
         index = choose(cards)
@@ -60,7 +64,7 @@ def poll(interval, dry_run, stop_on_result=False):
     previous_state = None
     reported_result = None
     while True:
-        state, image = observe()
+        state, image, slots = observe()
         round_number += 1
         print(f"[poll {round_number}] {state}", flush=True)
         if state in ("battle_won", "battle_lost"):
@@ -71,7 +75,7 @@ def poll(interval, dry_run, stop_on_result=False):
                     return
             last_action = None
             repeats = wait_frames = 0
-        elif state != "three_cards" and state not in TARGETS:
+        elif state not in (*DRAW_STATES, "five_cards_claim", "three_cards"):
             if wait_frames == 0:
                 print(f"{state}: no tap")
             wait_frames += 1
@@ -85,7 +89,7 @@ def poll(interval, dry_run, stop_on_result=False):
             wait_frames = 0
             # Back-to-back level-ups can present another choice between polls.
             if state == "three_cards" or state != last_action:
-                act(state, image, dry_run)
+                act(state, image, dry_run, slots)
                 last_action = state
                 repeats = 0
             else:
@@ -112,8 +116,8 @@ def main():
         if args.loop:
             poll(args.interval, args.dry_run, args.stop_on_result)
         else:
-            state, image = observe()
-            act(state, image, args.dry_run)
+            state, image, slots = observe()
+            act(state, image, args.dry_run, slots)
     except KeyboardInterrupt:
         print("Stopped.")
     except (OSError, ValueError, subprocess.SubprocessError, cv2.error) as error:

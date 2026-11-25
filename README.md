@@ -11,8 +11,9 @@ The tool will recognize two card selection screens and choose by position. Card 
 descriptions, and effects do not affect the choice.
 
 - **Three cards:** Tap the first card once. The game returns to battle automatically.
-- **Five cards:** Draw the first card. If prompted to draw again, choose a remaining face-down
-  card. The "獲得" button appears when all required draws are complete. Tap it to resume battle.
+- **Five cards:** Draw a random face-down card. If prompted to draw again, choose a remaining
+  face-down card at random. Each eligible slot is equally likely. Tap the gold "獲得" button
+  when all required draws are complete to resume battle.
 
 During battle or on an unrecognized screen, the tool waits without tapping.
 
@@ -106,7 +107,7 @@ the action for the current screen, then run one live step (macOS, zsh):
 On Windows (PowerShell), use `.\.venv\Scripts\python.exe scripts\run_step.py` with the same
 options. Each invocation captures a fresh frame. On the three-card screen, verify that a live
 step selects the reported card and battle resumes. Run again during battle and expect `wait: no tap`.
-For five cards, run once per action: draw the top-left card, draw the top-middle card if
+For five cards, run once per action: draw a random card, draw another face-down card if
 prompted, and tap the claim button when it appears.
 
 ## Poll during battle
