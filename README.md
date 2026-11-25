@@ -16,7 +16,7 @@ descriptions, and effects do not affect the choice.
 
 During battle or on an unrecognized screen, the tool waits without tapping.
 
-## Phase 2 (planned)
+## Phase 2: three-card priority
 
 On the three-card upgrade screen, choose the highest-priority card available.
 The priority order is highest first.
@@ -28,9 +28,16 @@ The priority order is highest first.
 
 If multiple cards share the highest priority, choose the leftmost of those cards.
 
+Preview the choice with `scripts/preview_choice.py IMAGE` or `scripts/preview_choice.py --live`
+using the project Python environment. Both modes report the categories from left to right
+without tapping. Both single-step and polling commands apply the same choice to the current
+frame. If any category is uncertain, neither command taps.
+
 ## Project status
 
-Phase 1 implementation is complete and has passed device validation. Phase 2 is planned.
+Phase 1 has passed device validation. Phase 2 is in progress. The author completed a full
+battle on the target device using priority selection. Combination cards have been checked
+in screenshot replay; live selection of that category is not yet confirmed.
 
 ## Capture one screenshot
 
@@ -98,7 +105,7 @@ the action for the current screen, then run one live step (macOS, zsh):
 
 On Windows (PowerShell), use `.\.venv\Scripts\python.exe scripts\run_step.py` with the same
 options. Each invocation captures a fresh frame. On the three-card screen, verify that a live
-step selects the left card and battle resumes. Run again during battle and expect `wait: no tap`.
+step selects the reported card and battle resumes. Run again during battle and expect `wait: no tap`.
 For five cards, run once per action: draw the top-left card, draw the top-middle card if
 prompted, and tap the claim button when it appears.
 
@@ -121,7 +128,7 @@ Two consecutive checks showing the same outcome confirm the result. The terminal
 continues so you can manually start another battle. With `--stop-on-result`, the Python process
 exits successfully and the phone stays on the result screen. This also applies in dry-run mode.
 
-Each poll showing three upgrade cards taps the left card once, including consecutive level-ups.
+Each poll showing three recognized upgrade cards taps the preferred card once, even on consecutive level-ups.
 For five-card screens, each new selection state triggers its corresponding action once. If that
 state persists for three further checks, the loop prints a reminder and keeps observing. Two
 consecutive `wait` results allow the same five-card state to trigger a fresh action.
