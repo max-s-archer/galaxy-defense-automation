@@ -25,20 +25,26 @@ The priority order is highest first.
 1. Purple card
 2. Combination skill card (組合卡)
 3. Chain skill card (連鎖卡)
-4. Ordinary card
+4. New weapon card (新)
+5. Ordinary card
 
 If multiple cards share the highest priority, choose the leftmost of those cards.
 
 Preview the choice with `scripts/preview_choice.py IMAGE` or `scripts/preview_choice.py --live`
 using the project Python environment. Both modes report the categories from left to right
 without tapping. Both single-step and polling commands apply the same choice to the current
-frame. If any category is uncertain, neither command taps.
+frame. A card marked `新` is classified as a new weapon and ranks above an ordinary card.
+If any category is uncertain, neither command taps.
+
+When the phone is on the battle start page, the script recognizes the `開始戰鬥` button as
+`battle_ready` and taps it once. It then waits for the battle screen before handling cards.
 
 ## Project status
 
 Phase 1 has passed device validation. Phase 2 is in progress. The author completed a full
 battle on the target device using priority selection. Combination cards have been checked
-in screenshot replay; live selection of that category is not yet confirmed.
+in screenshot replay; live selection of that category is not yet confirmed. New weapon
+recognition and automatic battle start are ready for device testing.
 
 ## Capture one screenshot
 
@@ -87,6 +93,7 @@ Supply your own screenshot path. The detector uses the portrait layout observed 
 | Output | Screen |
 | --- | --- |
 | `three_cards` | Three face-up upgrade choices |
+| `battle_ready` | Stage selection with the active Start Battle button |
 | `five_cards` | Five face-down cards ready to draw |
 | `five_cards_draw_again` | First card revealed and the game prompts for another draw |
 | `five_cards_claim` | All required draws complete and the gold claim button visible |

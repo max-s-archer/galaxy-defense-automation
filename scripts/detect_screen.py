@@ -29,6 +29,14 @@ def detect_with_slots(image):
     def coverage(mask, x, y, w, h):
         return cv2.countNonZero(mask[y:y+h, x:x+w]) / (w * h)
 
+    # Require the active start button, stage banner and selected battle tab together.
+    bright_teal = cv2.inRange(hsv, (75, 65, 130), (102, 255, 255))
+    if (coverage(bright_teal, 130, 820, 206, 41) > 0.75
+            # The title lettering stays bright teal on both normal and elite backgrounds.
+            and coverage(bright_teal, 180, 135, 106, 18) > 0.2
+            and coverage(teal, 205, 926, 50, 53) > 0.7):
+        return "battle_ready", ()
+
     # Result screens share a return button and a weapon statistics header.
     if (coverage(teal, 36, 805, 155, 33) > 0.8
             and coverage(teal, 90, 401, 285, 19) > 0.65):

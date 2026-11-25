@@ -34,6 +34,8 @@ def act(state, image, dry_run, slots):
         print(f"{state}: random card {index + 1}")
     elif state == "five_cards_claim":
         target = (233, 920)
+    elif state == "battle_ready":
+        target = (233, 840)
     if state == "three_cards":
         cards = classify_cards(image)
         index = choose(cards)
@@ -63,17 +65,25 @@ def poll(interval, dry_run, stop_on_result=False):
     round_number = 0
     previous_state = None
     reported_result = None
+    start_sent = False
     while True:
         state, image, slots = observe()
         round_number += 1
         print(f"[poll {round_number}] {state}", flush=True)
         if state in ("battle_won", "battle_lost"):
+            start_sent = False
             if state == previous_state and state != reported_result:
                 print(f"Result: {state}", flush=True)
                 reported_result = state
                 if stop_on_result:
                     return
             last_action = None
+            repeats = wait_frames = 0
+        elif state == "battle_ready":
+            if not start_sent:
+                act(state, image, dry_run, slots)
+                start_sent = True
+            last_action = reported_result = None
             repeats = wait_frames = 0
         elif state not in (*DRAW_STATES, "five_cards_claim", "three_cards"):
             if wait_frames == 0:
@@ -85,6 +95,7 @@ def poll(interval, dry_run, stop_on_result=False):
                 reported_result = None
             repeats = 0
         else:
+            start_sent = False
             reported_result = None
             wait_frames = 0
             # Back-to-back level-ups can present another choice between polls.

@@ -11,7 +11,7 @@ from capture_screen import capture_png
 from detect_screen import detect
 
 
-PRIORITY = ("purple", "combo", "chain", "ordinary")
+PRIORITY = ("purple", "combo", "chain", "new_weapon", "ordinary")
 
 
 def classify_cards(image):
@@ -19,6 +19,7 @@ def classify_cards(image):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     teal = cv2.inRange(hsv, (75, 50, 45), (105, 255, 255))
     purple = cv2.inRange(hsv, (118, 45, 45), (155, 255, 255))
+    bright_teal = cv2.inRange(hsv, (75, 50, 161), (105, 255, 255))
 
     def coverage(region):
         return cv2.countNonZero(region) / region.size
@@ -33,7 +34,11 @@ def classify_cards(image):
 
         badge = coverage(teal[652:665, x-42:x+42])
         if badge < 0.15:
-            return "ordinary"
+            # The bright 新 glyph is just below the left edge of the title band.
+            new_label = coverage(bright_teal[458:470, x-64:x-51])
+            if new_label > 0.28:
+                return "new_weapon"
+            return "ordinary" if new_label < 0.13 else "unknown"
         if badge < 0.65:
             return "unknown"
 
